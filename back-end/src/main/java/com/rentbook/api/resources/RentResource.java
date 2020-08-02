@@ -1,7 +1,6 @@
-	package com.rentbook.api.controllers;
+package com.rentbook.api.resources;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -18,30 +17,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rentbook.api.models.Rent;
 import com.rentbook.api.models.RentDTO;
-import com.rentbook.api.repositories.RentRepository;
 import com.rentbook.api.services.RentService;
 
 @RestController
 @RequestMapping("/rents")
-public class RentController {
-
-	@Autowired
-	private RentRepository repository;
+public class RentResource {
 
 	@Autowired
 	private RentService service;
 
 	@GetMapping
 	public ResponseEntity<?> listAll() {
-		List<Rent> list = repository.findAll();
+		List<Rent> list = service.findAll();
 		List<RentDTO> response = service.calcPaymentValues(list);
 		return !response.isEmpty() ? ResponseEntity.ok(response) : ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findOne(@PathVariable Long id) {
-		Optional<Rent> response = repository.findById(id);
-		return response.isPresent() ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+	public ResponseEntity<Rent> findOne(@PathVariable Long id) {
+		Rent response = service.findById(id);
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping

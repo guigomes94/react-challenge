@@ -12,15 +12,25 @@ import com.rentbook.api.models.Book;
 import com.rentbook.api.models.Rent;
 import com.rentbook.api.models.RentDTO;
 import com.rentbook.api.repositories.RentRepository;
+import com.rentbook.api.services.exceptions.EntityNotFoundException;
 
 @Service
 public class RentService {
 
 	@Autowired
 	private RentRepository repository;
+	
+	public List<Rent> findAll() {
+		return repository.findAll();
+	}
+	
+	public Rent findById(Long id) {
+		return repository.findById(id).orElseThrow(
+				() -> new EntityNotFoundException("Rent not found! ID " + id + " not exist."));
+	}
 
 	@Autowired
-	private BookRegisterService bookService;
+	private BookService bookService;
 
 	public List<RentDTO> calcPaymentValues(List<Rent> rents) {
 		List<RentDTO> calculatedRents = new ArrayList<>();
@@ -67,6 +77,7 @@ public class RentService {
 		return null;
 	}
 
+	@SuppressWarnings("unused")
 	public RentDTO devolutionBook(Long id, Rent obj) { 
 		Optional<Rent> oldObj = repository.findById(id);
 		Book changeAvailability = bookService.changeAvailability(obj.getBook().getIdBook());

@@ -1,7 +1,6 @@
-package com.rentbook.api.controllers;
+package com.rentbook.api.resources;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -17,29 +16,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentbook.api.models.Book;
-import com.rentbook.api.repositories.BookRepository;
-import com.rentbook.api.services.BookRegisterService;
+import com.rentbook.api.services.BookService;
 
 @RestController
 @RequestMapping("/books")
-public class BookController {
+public class BookResource {
 	
 	@Autowired
-	private BookRepository repository;
-	
-	@Autowired
-	private BookRegisterService service;
+	private BookService service;
 	
 	@GetMapping
 	public ResponseEntity<?> listAll() {
-		List<Book> response = repository.findAll();
+		List<Book> response = service.findAll();
 		return !response.isEmpty() ? ResponseEntity.ok(response) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findOne(@PathVariable Long id) {
-		Optional<Book> response = repository.findById(id);
-		return response.isPresent() ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+	public ResponseEntity<Book> findOne(@PathVariable Long id) {
+		Book response = service.findById(id);
+		return ResponseEntity.ok(response);
 	}
 	
 	@PostMapping

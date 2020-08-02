@@ -1,7 +1,6 @@
-package com.rentbook.api.controllers;
+package com.rentbook.api.resources;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -17,29 +16,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rentbook.api.models.Author;
-import com.rentbook.api.repositories.AuthorRepository;
-import com.rentbook.api.services.AuthorRegisterService;
+import com.rentbook.api.services.AuthorService;
 
 @RestController
 @RequestMapping("/authors")
-public class AuthorController {
+public class AuthorResource {
 	
 	@Autowired
-	private AuthorRepository repository;
-	
-	@Autowired
-	private AuthorRegisterService service;
+	private AuthorService service;
 	
 	@GetMapping
 	public ResponseEntity<?> listAll() {
-		List<Author> response = repository.findAll();
+		List<Author> response = service.findAll();
 		return !response.isEmpty() ? ResponseEntity.ok(response) : ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<?> findOne(@PathVariable Long id) {
-		Optional<Author> response = repository.findById(id);
-		return response.isPresent() ? ResponseEntity.ok(response) : ResponseEntity.notFound().build();
+	public ResponseEntity<Author> findOne(@PathVariable Long id) {
+		Author response = service.findById(id);
+		return ResponseEntity.ok(response);
 	}
 	
 	@PostMapping

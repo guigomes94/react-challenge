@@ -22,6 +22,7 @@ public class RentDTO {
 	
 	private Double lateFee;
 	
+	@SuppressWarnings("unused")
 	private Double totalPayment;
 
 	public Long getId() {

@@ -1,4 +1,4 @@
-package com.rentbook.api.controllers;
+package com.rentbook.api.resources;
 
 import java.util.List;
 
@@ -11,48 +11,50 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rentbook.api.models.Phone;
-import com.rentbook.api.repositories.PhoneRepository;
-import com.rentbook.api.services.PhoneRegisterService;
+import com.rentbook.api.models.Scheduling;
+import com.rentbook.api.services.SchedulingService;
 
 @RestController
-@RequestMapping("/phones")
-public class PhoneController {
+@RequestMapping("/schedulings")
+public class SchedulingResource {
 	
 	@Autowired
-	private PhoneRepository repository;
-	
-	@Autowired
-	private PhoneRegisterService service;
+	private SchedulingService service;
 	
 	@GetMapping
 	public ResponseEntity<?> listAll() {
-		List<Phone> response = repository.findAll();
+		List<Scheduling> response = service.findAll();
 		return !response.isEmpty() ? ResponseEntity.ok(response) : ResponseEntity.noContent().build();
 	}
 	
-	/*
-	 * @GetMapping("/{id}") public ResponseEntity<?> buscar(@PathVariable Long id) {
-	 * Optional<Phone> response = repository.findById(id); return
-	 * response.isPresent() ? ResponseEntity.ok(response) :
-	 * ResponseEntity.notFound().build(); }
-	 */
+	@GetMapping("/{id}")
+	public ResponseEntity<Scheduling> findOne(@PathVariable Long id) {
+		Scheduling response = service.findById(id);
+		return ResponseEntity.ok(response);
+	}
 	
 	@PostMapping
-	public ResponseEntity<?> create(@Valid @RequestBody Phone obj) {
-		Phone save = service.addPhone(obj);
+	public ResponseEntity<?> create(@Valid @RequestBody Scheduling obj) {
+		Scheduling save = service.createScheduling(obj);
 		return save != null ? ResponseEntity.status(HttpStatus.CREATED).body(save) : ResponseEntity.badRequest().build();
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Scheduling obj) {
+		Scheduling updated = service.updateScheduling(id, obj);
+		return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
 	}
 	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long id) {
-		service.deletePhone(id);
+		service.cancelScheduling(id);
 	}
 
 }

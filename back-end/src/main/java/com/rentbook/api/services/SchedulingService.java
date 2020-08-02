@@ -1,5 +1,6 @@
 package com.rentbook.api.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +8,22 @@ import org.springframework.stereotype.Service;
 
 import com.rentbook.api.models.Scheduling;
 import com.rentbook.api.repositories.SchedulingRepository;
+import com.rentbook.api.services.exceptions.EntityNotFoundException;
 
 @Service
 public class SchedulingService {
 	
 	@Autowired
 	private SchedulingRepository repository;
+	
+	public List<Scheduling> findAll() {
+		return repository.findAll();
+	}
+	
+	public Scheduling findById(Long id) {
+		return repository.findById(id).orElseThrow(
+				() -> new EntityNotFoundException("Scheduling not found! ID " + id + " not exist."));
+	}
 	
 	public Scheduling createScheduling(Scheduling obj) {
 		try {
